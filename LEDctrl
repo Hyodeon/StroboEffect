@@ -1,0 +1,55 @@
+#include <FastLED.h>
+#define LED_PIN     13
+#define NUM_LEDS    22
+
+#define COLOR       { 255, 255, 0 }
+#define DELAY_TIME  0.1
+#define pot A1
+
+struct RGBval{
+  int r;
+  int g;
+  int b;
+};
+
+void ON(int n, RGBval col);
+void OFF(int n);
+
+CRGB leds[NUM_LEDS];
+void setup() {
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  pinMode(pot, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  float aRead = analogRead(pot)/10;
+
+  float delaytime = aRead*DELAY_TIME;
+  
+  for(int i = 0; i < NUM_LEDS; i++)
+  {
+    ON(i, COLOR);
+  }
+  delay(delaytime);
+  
+  for(int i = 0; i < NUM_LEDS; i++)
+  {
+    OFF(i);
+  }
+  delay(delaytime);
+
+  Serial.println(analogRead(pot));
+}
+
+void ON(int n, RGBval col)
+{
+  leds[n] = CRGB(col.r, col.g, col.b);
+  FastLED.show();
+}
+
+void OFF(int n)
+{
+  leds[n] = CRGB(0, 0, 0);
+  FastLED.show();
+}
